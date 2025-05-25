@@ -1,52 +1,121 @@
 
 <!DOCTYPE html>
-<html>
+<html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <title>더끌림 여름특강 신청</title>
+  <meta charset="UTF-8" />
+  <title>여름특강 달력형 신청</title>
   <style>
-    .grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px; margin-top: 20px; }
-    .cell {
-      padding: 10px; border: 1px solid #ccc; text-align: center; cursor: pointer;
-    }
+    body { font-family: sans-serif; padding: 20px; }
+    table { border-collapse: collapse; width: 100%; margin-top: 20px; }
+    td, th { border: 1px solid #ccc; padding: 10px; text-align: center; vertical-align: top; }
+    .date-label { font-weight: bold; margin-bottom: 5px; display: block; }
+    .cell { margin: 2px 0; cursor: pointer; border: 1px solid #ccc; padding: 5px; border-radius: 4px; }
     .cell.selected { background-color: coral; color: white; }
+    .form-input { margin-bottom: 10px; display: block; }
   </style>
 </head>
 <body>
-  <h2>더끌림 여름특강 신청</h2>
+  <h2>여름특강 달력형 신청</h2>
   <form id="submitForm">
-    이름: <input type="text" id="name" required><br>
-    학교: <input type="text" id="school" required><br>
-    학년: <input type="text" id="grade" required><br><br>
+    <label class="form-input">이름: <input type="text" id="name" required /></label>
+    <label class="form-input">학교: <input type="text" id="school" required /></label>
+    <label class="form-input">학년: <input type="text" id="grade" required /></label>
 
-    <div class="grid" id="grid"></div><br>
+    <table>
+      <thead>
+        <tr>
+          <th>월</th><th>화</th><th>수</th><th>목</th><th>금</th><th>토</th><th>일</th>
+        </tr>
+      </thead>
+      <tbody id="calendarBody"></tbody>
+    </table>
+
+    <br />
     <button type="submit">제출하기</button>
   </form>
 
   <script>
-    const days = ["월", "화", "수", "목", "금"];
-    const times = ["1타임", "2타임", "3타임"];
-    const grid = document.getElementById("grid");
-    let selected = [];
+    const dates = {
+      "7/14": ["B 타임", "C 타임"],
+      "7/15": ["B 타임", "C 타임"],
+      "7/16": ["B 타임", "C 타임"],
+      "7/17": ["B 타임", "C 타임"],
+      "7/18": ["B 타임", "C 타임"],
+      "7/19": ["A 타임", "B 타임"],
+      "7/20": ["A 타임", "B 타임"],
+      "7/21": ["B 타임", "C 타임"],
+      "7/22": ["B 타임", "C 타임"],
+      "7/23": ["B 타임", "C 타임"],
+      "7/24": ["B 타임", "C 타임"],
+      "7/25": ["B 타임", "C 타임"],
+      "7/26": ["A 타임", "B 타임"],
+      "7/27": ["A 타임", "B 타임"],
+      "7/28": ["B 타임", "C 타임"],
+      "7/29": ["B 타임", "C 타임"],
+      "7/30": ["B 타임", "C 타임"],
+      "7/31": ["B 타임", "C 타임"],
+      "8/1": ["B 타임", "C 타임"],
+      "8/2": ["A 타임", "B 타임"],
+      "8/3": ["A 타임", "B 타임"],
+      "8/4": ["B 타임", "C 타임"],
+      "8/5": ["B 타임", "C 타임"],
+      "8/6": ["B 타임", "C 타임"],
+      "8/7": ["B 타임", "C 타임"],
+      "8/8": ["B 타임", "C 타임"],
+      "8/9": ["A 타임", "B 타임"],
+      "8/10": ["A 타임", "B 타임"],
+      "8/11": ["B 타임", "C 타임"],
+      "8/12": ["B 타임", "C 타임"],
+      "8/13": ["B 타임", "C 타임"],
+      "8/14": ["B 타임", "C 타임"],
+      "8/15": ["B 타임", "C 타임"],
+      "8/16": ["A 타임", "B 타임"],
+      "8/17": ["A 타임", "B 타임"],
+      "8/18": ["B 타임", "C 타임"],
+      "8/19": ["B 타임", "C 타임"],
+      "8/20": ["B 타임", "C 타임"]
+    };
 
-    times.forEach(time => {
-      days.forEach(day => {
-        const label = `${day} ${time}`;
-        const div = document.createElement("div");
-        div.className = "cell";
-        div.textContent = label;
-        div.addEventListener("click", () => {
-          if (selected.includes(label)) {
-            selected = selected.filter(i => i !== label);
-            div.classList.remove("selected");
-          } else {
-            selected.push(label);
-            div.classList.add("selected");
+    const calendarBody = document.getElementById("calendarBody");
+    const selected = [];
+
+    function createCalendar() {
+      const startDate = new Date(2024, 6, 14); // July 14, 2024
+      for (let week = 0; week < 6; week++) {
+        const row = document.createElement("tr");
+        for (let day = 0; day < 7; day++) {
+          const cellDate = new Date(startDate);
+          cellDate.setDate(startDate.getDate() + week * 7 + day);
+          const month = cellDate.getMonth() + 1;
+          const date = cellDate.getDate();
+          const key = `${month}/${date}`;
+          const td = document.createElement("td");
+          if (dates[key]) {
+            td.innerHTML = `<span class="date-label">${key}</span>`;
+            dates[key].forEach(slot => {
+              const div = document.createElement("div");
+              div.className = "cell";
+              div.textContent = slot;
+              div.addEventListener("click", () => {
+                const id = `${key} ${slot}`;
+                if (selected.includes(id)) {
+                  selected.splice(selected.indexOf(id), 1);
+                  div.classList.remove("selected");
+                } else {
+                  selected.push(id);
+                  div.classList.add("selected");
+                }
+              });
+              td.appendChild(div);
+            });
           }
-        });
-        grid.appendChild(div);
-      });
-    });
+          row.appendChild(td);
+        }
+        calendarBody.appendChild(row);
+      }
+    }
+
+    createCalendar();
 
     document.getElementById("submitForm").addEventListener("submit", async (e) => {
       e.preventDefault();
