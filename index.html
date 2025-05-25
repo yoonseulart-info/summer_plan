@@ -1,9 +1,39 @@
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>여름특강 신청</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; }
+    .form-input { margin-bottom: 10px; }
+    .form-input input { padding: 8px; width: 300px; }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin-top: 20px;
+      min-width: 600px;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      text-align: center;
+      padding: 10px;
+      vertical-align: top;
+    }
+    th { background-color: #e0e7ff; }
+    .cell {
+      margin: 4px 0;
+      cursor: pointer;
+      border: 1px solid #ccc;
+      padding: 6px;
+      border-radius: 4px;
+    }
+    .cell.selected {
+      background-color: coral;
+      color: white;
+    }
+  </style>
 </head>
 <body>
   <h2>여름특강 달력형 신청</h2>
@@ -24,8 +54,107 @@
       <span style="color: #555;">[고급] → "2025 여름특강 달력형 신청(안전하지 않음)" 클릭 → 권한 허용</span>을 눌러주세요.
       </span>
     </div>
+    <table>
+      <thead>
+        <tr>
+          <th>월</th><th>화</th><th>수</th><th>목</th><th>금</th><th>토</th><th>일</th>
+        </tr>
+      </thead>
+      <tbody id="calendarBody"></tbody>
+    </table>
     <button type="submit">제출하기</button>
   </form>
+  <script>
+    const dates = {
+      "7/14": [],
+      "7/15": [],
+      "7/16": ["미개강", "B 타임", "C 타임"],
+      "7/17": ["미개강", "B 타임", "C 타임"],
+      "7/18": ["미개강", "B 타임", "C 타임"],
+      "7/19": ["A 타임", "B 타임", "미개강"],
+      "7/20": ["A 타임", "B 타임", "미개강"],
+      "7/21": ["미개강", "B 타임", "C 타임"],
+      "7/22": ["미개강", "B 타임", "C 타임"],
+      "7/23": ["미개강", "B 타임", "C 타임"],
+      "7/24": ["미개강", "B 타임", "C 타임"],
+      "7/25": ["미개강", "B 타임", "C 타임"],
+      "7/26": ["A 타임", "B 타임", "미개강"],
+      "7/27": ["A 타임", "B 타임", "미개강"],
+      "7/28": ["미개강", "B 타임", "C 타임"],
+      "7/29": ["미개강", "B 타임", "C 타임"],
+      "7/30": ["미개강", "B 타임", "C 타임"],
+      "7/31": ["미개강", "B 타임", "C 타임"],
+      "8/1": ["미개강", "B 타임", "C 타임"],
+      "8/2": ["A 타임", "B 타임", "미개강"],
+      "8/3": ["A 타임", "B 타임", "미개강"],
+      "8/4": ["미개강", "B 타임", "C 타임"],
+      "8/5": ["미개강", "B 타임", "C 타임"],
+      "8/6": ["미개강", "B 타임", "C 타임"],
+      "8/7": ["미개강", "B 타임", "C 타임"],
+      "8/8": ["미개강", "B 타임", "C 타임"],
+      "8/9": ["A 타임", "B 타임", "미개강"],
+      "8/10": ["A 타임", "B 타임", "미개강"],
+      "8/11": ["미개강", "B 타임", "C 타임"],
+      "8/12": ["미개강", "B 타임", "C 타임"],
+      "8/13": ["미개강", "B 타임", "C 타임"],
+      "8/14": ["미개강", "B 타임", "C 타임"],
+      "8/15": ["미개강", "B 타임", "C 타임"],
+      "8/16": ["A 타임", "B 타임", "미개강"],
+      "8/17": ["A 타임", "B 타임", "미개강"],
+      "8/18": ["미개강", "B 타임", "C 타임"],
+      "8/19": ["미개강", "B 타임", "C 타임"],
+      "8/20": ["미개강", "B 타임", "C 타임"],
+      "8/21": [],
+      "8/22": [],
+      "8/23": [],
+      "8/24": []
+
+    };
+    const selected = [];
+
+    function createCalendar() {
+      const calendarBody = document.getElementById("calendarBody");
+      const startDate = new Date(2024, 6, 14); // 7/14
+      for (let w = 0; w < 6; w++) {
+        const row = document.createElement("tr");
+        for (let d = 0; d < 7; d++) {
+          const cellDate = new Date(startDate);
+          cellDate.setDate(startDate.getDate() + w * 7 + d);
+          const key = `${cellDate.getMonth() + 1}/${cellDate.getDate()}`;
+          const td = document.createElement("td");
+          if (dates[key]) {
+            td.innerHTML = `<strong>${key}</strong><br/>`;
+            dates[key].forEach(slot => {
+              const div = document.createElement("div");
+              div.className = "cell";
+              div.textContent = slot;
+              if (slot === "미개강") {
+                div.style.pointerEvents = "none";
+                div.style.backgroundColor = "#eee";
+                div.style.color = "#aaa";
+              } else {
+                div.addEventListener("click", () => {
+                  const id = `${key} ${slot}`;
+                  if (selected.includes(id)) {
+                    selected.splice(selected.indexOf(id), 1);
+                    div.classList.remove("selected");
+                  } else {
+                    selected.push(id);
+                    div.classList.add("selected");
+                  }
+                });
+              }
+              td.appendChild(div);
+            });
+          }
+          row.appendChild(td);
+        }
+        calendarBody.appendChild(row);
+      }
+    }
+    document.addEventListener("DOMContentLoaded", () => {
+      createCalendar();
+    });
+  </script>
 </body>
 </html>
-<!-- trigger rebuild -->
