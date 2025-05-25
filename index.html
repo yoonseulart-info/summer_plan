@@ -3,16 +3,48 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>여름특강 달력형 신청</title>
   <style>
-    body { font-family: sans-serif; padding: 20px; }
-    table { border-collapse: collapse; width: 100%; margin-top: 20px; }
-    td, th { border: 1px solid #ccc; padding: 8px; text-align: center; vertical-align: top; }
+    body { font-family: sans-serif; padding: 20px; margin: 0; }
+    .form-input { margin-bottom: 10px; display: block; }
+    .form-input input { padding: 8px; width: 100%; max-width: 400px; }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      min-width: 600px;
+      overflow-x: auto;
+      display: block;
+    }
+    td, th {
+      border: 1px solid #ccc;
+      padding: 10px;
+      text-align: center;
+      vertical-align: top;
+      min-width: 80px;
+    }
     th { background-color: #e0e7ff; }
     .date-label { font-weight: bold; margin-bottom: 4px; display: block; }
-    .cell { margin: 1px 0; cursor: pointer; border: 1px solid #ccc; padding: 4px; border-radius: 4px; font-size: 0.9em; }
+    .cell {
+      margin: 4px 0;
+      cursor: pointer;
+      border: 1px solid #ccc;
+      padding: 8px;
+      border-radius: 4px;
+      font-size: 0.9em;
+    }
     .cell.selected { background-color: coral; color: white; }
-    .form-input { margin-bottom: 10px; display: block; }
+    button {
+      padding: 10px 20px;
+      font-size: 1em;
+      margin-top: 20px;
+      cursor: pointer;
+    }
+    @media (max-width: 768px) {
+      .cell { font-size: 0.8em; padding: 6px; }
+      td, th { padding: 6px; }
+      button { width: 100%; font-size: 1em; padding: 12px; }
+    }
   </style>
 </head>
 <body>
@@ -31,7 +63,6 @@
       <tbody id="calendarBody"></tbody>
     </table>
 
-    <br />
     <button type="submit">제출하기</button>
   </form>
 
@@ -91,7 +122,7 @@
           const date = cellDate.getDate();
           const key = `${month}/${date}`;
           const td = document.createElement("td");
-          if (dates.hasOwnProperty(key)) {
+          if (dates[key]) {
             td.innerHTML = `<span class="date-label">${key}</span>`;
             dates[key].forEach(slot => {
               const div = document.createElement("div");
