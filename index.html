@@ -7,10 +7,10 @@
   <style>
     body { font-family: sans-serif; padding: 20px; }
     table { border-collapse: collapse; width: 100%; margin-top: 20px; }
-    td, th { border: 1px solid #ccc; padding: 10px; text-align: center; vertical-align: top; }
+    td, th { border: 1px solid #ccc; padding: 8px; text-align: center; vertical-align: top; }
     th { background-color: #e0e7ff; }
-    .date-label { font-weight: bold; margin-bottom: 5px; display: block; }
-    .cell { margin: 2px 0; cursor: pointer; border: 1px solid #ccc; padding: 5px; border-radius: 4px; }
+    .date-label { font-weight: bold; margin-bottom: 4px; display: block; }
+    .cell { margin: 1px 0; cursor: pointer; border: 1px solid #ccc; padding: 4px; border-radius: 4px; font-size: 0.9em; }
     .cell.selected { background-color: coral; color: white; }
     .form-input { margin-bottom: 10px; display: block; }
   </style>
@@ -37,6 +37,8 @@
 
   <script>
     const dates = {
+      "7/14": [],
+      "7/15": [],
       "7/16": ["미개강", "B 타임", "C 타임"],
       "7/17": ["미개강", "B 타임", "C 타임"],
       "7/18": ["미개강", "B 타임", "C 타임"],
@@ -79,8 +81,7 @@
     const selected = [];
 
     function createCalendar() {
-      const startDate = new Date(2024, 6, 14); // July 14, 2024 (Monday)
-      
+      const startDate = new Date(2024, 6, 14); // July 14, 2024
       for (let week = 0; week < 6; week++) {
         const row = document.createElement("tr");
         for (let day = 0; day < 7; day++) {
@@ -90,7 +91,7 @@
           const date = cellDate.getDate();
           const key = `${month}/${date}`;
           const td = document.createElement("td");
-          if (dates[key]) {
+          if (dates.hasOwnProperty(key)) {
             td.innerHTML = `<span class="date-label">${key}</span>`;
             dates[key].forEach(slot => {
               const div = document.createElement("div");
