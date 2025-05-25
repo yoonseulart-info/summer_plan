@@ -1,0 +1,71 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>더끌림 여름특강 신청</title>
+  <style>
+    .grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px; margin-top: 20px; }
+    .cell {
+      padding: 10px; border: 1px solid #ccc; text-align: center; cursor: pointer;
+    }
+    .cell.selected { background-color: coral; color: white; }
+  </style>
+</head>
+<body>
+  <h2>더끌림 여름특강 신청</h2>
+  <form id="submitForm">
+    이름: <input type="text" id="name" required><br>
+    학교: <input type="text" id="school" required><br>
+    학년: <input type="text" id="grade" required><br><br>
+
+    <div class="grid" id="grid"></div><br>
+    <button type="submit">제출하기</button>
+  </form>
+
+  <script>
+    const days = ["월", "화", "수", "목", "금"];
+    const times = ["1타임", "2타임", "3타임"];
+    const grid = document.getElementById("grid");
+    let selected = [];
+
+    times.forEach(time => {
+      days.forEach(day => {
+        const label = `${day} ${time}`;
+        const div = document.createElement("div");
+        div.className = "cell";
+        div.textContent = label;
+        div.addEventListener("click", () => {
+          if (selected.includes(label)) {
+            selected = selected.filter(i => i !== label);
+            div.classList.remove("selected");
+          } else {
+            selected.push(label);
+            div.classList.add("selected");
+          }
+        });
+        grid.appendChild(div);
+      });
+    });
+
+    document.getElementById("submitForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const payload = {
+        name: document.getElementById("name").value,
+        school: document.getElementById("school").value,
+        grade: document.getElementById("grade").value,
+        times: selected
+      };
+
+      await fetch("https://script.google.com/macros/s/your-script-id/exec", {
+        method: "POST",
+        body: JSON.stringify(payload),
+        headers: { "Content-Type": "application/json" }
+      });
+
+      alert("제출 완료!");
+      location.reload();
+    });
+  </script>
+</body>
+</html>
